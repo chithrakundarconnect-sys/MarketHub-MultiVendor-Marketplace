@@ -13,7 +13,7 @@ import {
   ShoppingBag,
 } from "lucide-react";
 import { useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
+
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 
@@ -62,17 +62,19 @@ const trackingSteps = [
 ];
 
 export default function OrderSuccessPage() {
-  const searchParams = useSearchParams();
+
   const [orderData, setOrderData] = useState<any>(null);
 
     useEffect(() => {
     const fetchOrder = async () => {
-      const orderId = searchParams.get("id");
+      
 
-      if (!orderId) return;
+      const params = new URLSearchParams(window.location.search);
+const orderId = params.get("id");
 
-      const snap = await getDoc(doc(db, "orders", orderId));
+if (!orderId) return;
 
+const snap = await getDoc(doc(db, "orders", orderId));
       if (snap.exists()) {
         setOrderData({
           id: snap.id,
