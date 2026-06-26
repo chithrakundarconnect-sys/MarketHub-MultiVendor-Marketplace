@@ -57,79 +57,42 @@ export function ChatAssistant() {
     // Simulate AI response delay
 await new Promise((resolve) => setTimeout(resolve, 1500));
 
-let response = "";
+try {
+  const res = await fetch("/api/chat", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      message: userMessage.content,
+    }),
+  });
 
-const userInput = inputValue.toLowerCase();
+  const data = await res.json();
 
-if (
-userInput.includes("shoe") ||
-userInput.includes("fashion")
-) {
-
-response =
-"Check our Fashion category for shoes, sneakers and trending styles.";
-
-} else if (
-userInput.includes("phone") ||
-userInput.includes("laptop") ||
-userInput.includes("electronics")
-) {
-
-response =
-"You can explore the Electronics category for mobiles, laptops and gadgets.";
-
-} else if (
-userInput.includes("cart")
-) {
-
-response =
-"You can view your cart from the top navigation bar.";
-
-} else if (
-userInput.includes("order")
-) {
-
-response =
-"Track your orders from Profile → Orders section.";
-
-} else if (
-userInput.includes("wishlist")
-) {
-
-response =
-"Your saved products are available in the Wishlist page.";
-
-} else if (
-userInput.includes("beauty")
-) {
-
-response =
-"Beauty products are available in the Beauty category.";
-
-} else if (
-userInput.includes("sports")
-) {
-
-response =
-"Explore Sports category for fitness and outdoor products.";
-
-} else {
-
-response =
-"I can help you with products, categories, cart, wishlist and orders.";
-}
-
-const aiMessage: Message = {
-id: `ai-${Date.now()}`,
-content: response,
-role: "assistant",
-timestamp: new Date(),
-};
-
-setMessages((prev) => [...prev, aiMessage]);
-setIsLoading(false);
+  const aiMessage: Message = {
+    id: `ai-${Date.now()}`,
+    content: data.response,
+    role: "assistant",
+    timestamp: new Date(),
   };
 
+  setMessages((prev) => [...prev, aiMessage]);
+} catch (error) {
+  console.error(error);
+
+  const aiMessage: Message = {
+    id: `ai-${Date.now()}`,
+    content: "Sorry, something went wrong.",
+    role: "assistant",
+    timestamp: new Date(),
+  };
+
+  setMessages((prev) => [...prev, aiMessage]);
+}
+
+setIsLoading(false);
+  };
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
